@@ -1,0 +1,18 @@
+# Local preview / reference files — not deployed
+_preview_*.pdf
+_screen_*.png
+docx_extract/
+_logo_b64.txt
+
+# Reference document (kept locally but not in repo)
+*.docx
+
+# Original PDF source assets (logo is already inlined into index.html)
+assets/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.claude/

@@ -222,6 +222,7 @@
     flex-shrink: 0;
     display: inline-block;
   }
+  .btn-label-short { display: none; }
   .btn-group {
     display: inline-flex;
     gap: 2px;
@@ -704,58 +705,331 @@
   .toast.err { background: var(--bad); }
 
   /* ============================================================
-     MOBILE
+     MOBILE  (≤ 720px) — phone-first, app-like alignment
      ============================================================ */
   @media (max-width: 720px) {
-    body { font-size: 14px; }
-    main { padding: 16px 10px 60px; }
+    body { font-size: 15px; }
+    main { padding: 12px 12px 80px; }
     .page {
-      padding: 22px 18px 18px;
-      border-radius: var(--radius);
-      margin-bottom: 20px;
+      padding: 24px 18px 18px;
+      border-radius: 14px;
+      margin: 0 auto 14px;
+      box-shadow: var(--shadow-sm);
     }
+    .page::before { height: 2px; border-radius: 14px 14px 0 0; }
+
+    /* --- Letterhead: stacked, breathing room, no nowrap --- */
     .letterhead {
       flex-direction: column;
       gap: 10px;
       text-align: center;
       align-items: center;
       padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
     }
-    .letterhead .logo { width: 240px; max-width: 80%; }
-    .letterhead .company { text-align: center; font-size: 11.5px; }
+    .letterhead .logo { width: 200px; max-width: 70%; }
+    .letterhead .company {
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .letterhead .company .addr-line { white-space: normal; }
+    .letterhead .company .lic {
+      font-size: 9.5px;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
 
-    /* All grid items full-width on mobile */
-    .grid > [class*="col-"] { grid-column: 1 / -1; }
-    .grid { gap: 12px 12px; }
+    /* --- Title block --- */
+    .report-title {
+      font-size: 22px;
+      letter-spacing: -0.02em;
+      margin: 14px 0 4px;
+    }
+    .page-2-title { font-size: 17px; }
+    .report-subtitle {
+      font-size: 9.5px;
+      letter-spacing: 0.12em;
+      margin-bottom: 18px;
+      padding: 0 4px;
+    }
+    .report-subtitle::before, .report-subtitle::after {
+      width: 14px;
+      margin: 0 8px;
+    }
 
-    .toolbar { padding: 10px 12px; gap: 8px; }
-    .toolbar .brand-text { font-size: 13px; }
-    .toolbar .brand-text small { font-size: 10.5px; margin-left: 0; }
+    /* --- Toolbar: stack vertically so actions get full width row --- */
+    .toolbar {
+      padding: 10px 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .toolbar .brand {
+      flex: 0 0 100%;
+      min-width: 0;
+      justify-content: center;
+      text-align: center;
+    }
+    .toolbar .brand-text {
+      font-size: 13px;
+      text-align: center;
+      width: 100%;
+    }
+    .toolbar .brand-text small {
+      font-size: 10px;
+      margin-left: 0;
+      letter-spacing: 0.08em;
+    }
+    /* Grid layout guarantees wrap: btn-group spans top row, actions share bottom row */
+    .toolbar .actions {
+      flex: 0 0 100%;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-areas:
+        "drafts drafts drafts"
+        "email share save";
+      gap: 6px;
+      padding: 0;
+    }
+    .toolbar .actions .btn-group { grid-area: drafts; justify-self: center; }
+    .toolbar .actions #btn-email { grid-area: email; min-width: 0; }
+    .toolbar .actions #btn-share { grid-area: share; min-width: 0; }
+    .toolbar .actions #btn-print { grid-area: save; min-width: 0; }
+    .toolbar .actions > .btn { width: 100%; }
     .toolbar .actions .btn-label-extra { display: none; }
-    .btn { padding: 9px 11px; font-size: 12.5px; }
-
-    .report-title { font-size: 23px; }
-    .page-2-title { font-size: 18px; }
-    .report-subtitle { font-size: 10px; margin-bottom: 18px; }
-    .report-subtitle::before, .report-subtitle::after { width: 18px; margin: 0 8px; }
-
-    .section { margin-top: 14px; }
-    .section > .section-head { font-size: 11.5px; padding: 12px 14px; }
-    .section > .section-body { padding: 14px; }
-
-    .compressor-grid {
-      grid-template-columns: 34px 1fr 1fr 1fr;
+    .toolbar .actions #btn-print .btn-label { display: none; }
+    .toolbar .actions #btn-print .btn-label-short { display: inline; }
+    .btn {
+      padding: 10px 10px;
+      font-size: 13px;
+      min-height: 42px;
+      flex-shrink: 0;
+      justify-content: center;
     }
-    .compressor-grid .pressure-cell { grid-column: 2 / -1; }
-    .compressor-grid .pressure-head { display: none; }
+    .btn-group {
+      padding: 2px;
+      gap: 1px;
+    }
+    .btn-group .btn {
+      padding: 8px 10px;
+      min-height: 36px;
+    }
+
+    /* --- Sections: tighter cards, clearer number badge --- */
+    .section {
+      margin-top: 14px;
+      border-radius: 12px;
+    }
+    .section > .section-head {
+      font-size: 11.5px;
+      padding: 13px 16px;
+      letter-spacing: 0.1em;
+    }
+    .section > .section-head::before {
+      font-size: 11px;
+      padding-right: 10px;
+    }
+    .section > .section-body { padding: 14px 14px 16px; }
+
+    /* --- Form grid: single column, generous spacing --- */
+    .grid > [class*="col-"] { grid-column: 1 / -1; }
+    .grid { gap: 14px; }
+    .field-group { gap: 5px; }
+    .field-group > label { font-size: 10.5px; }
+    .field-group .hint { font-size: 11.5px; }
+
+    /* --- Inputs: 16px font prevents iOS zoom-on-focus, bigger touch targets --- */
+    .field {
+      font-size: 16px;
+      min-height: 44px;
+      padding: 11px 14px;
+      border-radius: 8px;
+    }
+    textarea.field {
+      min-height: 110px;
+      padding: 12px 14px;
+    }
+
+    /* --- Phase row: cleaner thumb-friendly L1/L2/L3 layout --- */
+    .phase-row { gap: 6px; }
+    .phase-row .field {
+      padding: 11px 6px;
+      text-align: center;
+      min-width: 0;
+    }
+
+    /* --- YES/NO/NA: stretches full width, taller for fat thumbs --- */
+    .ynna {
+      display: flex;
+      width: 100%;
+      height: 46px;
+      border-radius: 8px;
+    }
+    .ynna label { min-width: 0; }
+    .ynna span {
+      font-size: 12.5px;
+      line-height: 44px;
+      padding: 0;
+    }
+
+    /* --- Compressor grid: each row becomes a stack
+         [Compressor N]   (full-width label badge)
+         [L1] [L2] [L3]   (3-col phase row)
+         [Pressure]       (full-width input)
+    --- */
+    .compressor-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px 6px;
+      margin-top: 8px;
+    }
+    .compressor-grid .field,
+    .cfan-grid .field {
+      padding: 11px 6px;
+      text-align: center;
+      min-width: 0;
+    }
+    .compressor-grid .pressure-cell .field {
+      text-align: left;
+      padding: 11px 14px;
+    }
+    .compressor-grid .head-cell { display: none; }
+    .compressor-grid .num-cell {
+      grid-column: 1 / -1;
+      justify-content: flex-start;
+      padding: 0 12px;
+      height: 30px;
+      background: var(--bg-soft);
+      border: none;
+      border-left: 3px solid var(--brand-red);
+      border-radius: 4px;
+      font-size: 10.5px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+    .compressor-grid .num-cell::before {
+      content: "Compressor ";
+    }
+    .compressor-grid .num-cell:first-of-type { margin-top: 0; }
+    .compressor-grid .pressure-cell {
+      grid-column: 1 / -1;
+    }
+
+    /* --- Condenser fan grid: stack like compressor --- */
+    .cfan-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px 6px;
+    }
+    .cfan-grid .head-cell { display: none; }
+    .cfan-grid .num-cell {
+      grid-column: 1 / -1;
+      justify-content: flex-start;
+      padding: 0 12px;
+      height: 28px;
+      background: var(--bg-soft);
+      border: none;
+      border-left: 3px solid var(--brand-red);
+      border-radius: 4px;
+      font-size: 10.5px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .cfan-grid .num-cell::before {
+      content: "Fan ";
+    }
+
+    /* --- Checklist: comfortable rows --- */
+    .checklist-item {
+      grid-template-columns: 1fr;
+      row-gap: 8px;
+      padding: 14px 0;
+    }
+    .checklist .item-label {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* --- Signatures: stack --- */
+    .signature-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .signature-block { padding: 14px; border-radius: 12px; }
+
+    /* --- Page foot: wraps gracefully, smaller chars --- */
+    .page-foot {
+      padding-top: 14px;
+      font-size: 10px;
+      line-height: 1.7;
+      letter-spacing: 0.04em;
+    }
+    .page-foot .sep {
+      padding: 0 4px;
+    }
+
+    /* --- Toast: stays above keyboard, full mobile width --- */
+    .toast {
+      left: 12px;
+      right: 12px;
+      max-width: none;
+      transform: translateY(20px);
+      bottom: 16px;
+    }
+    .toast.show { transform: translateY(0); }
   }
 
-  /* Hide brand-text label inline only on very small screens */
-  @media (max-width: 480px) {
-    .toolbar .brand-text { font-size: 12px; max-width: 150px; }
-    .toolbar .brand-text small { font-size: 10px; }
-    .btn { padding: 8px 10px; min-height: 36px; }
-    .report-title { font-size: 20px; letter-spacing: -0.02em; }
+  /* ============================================================
+     VERY SMALL SCREENS  (≤ 420px)
+     ============================================================ */
+  @media (max-width: 420px) {
+    main { padding: 8px 8px 80px; }
+    .page { padding: 22px 14px 16px; border-radius: 12px; }
+
+    .toolbar { padding: 9px 10px; }
+    .toolbar .brand-text {
+      font-size: 12.5px;
+      max-width: 110px;
+      text-overflow: ellipsis;
+    }
+    .toolbar .brand-text small { font-size: 9.5px; }
+    .btn { padding: 8px 10px; font-size: 12px; min-height: 40px; }
+    .btn-group .btn { min-height: 34px; padding: 6px 8px; }
+
+    .letterhead .logo { width: 170px; }
+    .letterhead .company { font-size: 11px; }
+    .letterhead .company .lic { font-size: 9px; }
+
+    .report-title { font-size: 19px; }
+    .report-subtitle { font-size: 9px; }
+
+    .section > .section-head { padding: 12px 14px; font-size: 11px; }
+    .section > .section-body { padding: 13px 12px 14px; }
+
+    .field { font-size: 16px; padding: 11px 12px; }
+    .field-group > label { font-size: 10px; }
+    .ynna span { font-size: 12px; }
+
+    /* Phase row: keep 3 columns but tighter */
+    .phase-row { gap: 5px; }
+    .phase-row .field { padding: 11px 4px; font-size: 15px; }
+
+    .compressor-grid, .cfan-grid { gap: 6px; }
+    .compressor-grid .field,
+    .cfan-grid .field { padding: 11px 4px; font-size: 15px; }
+    .compressor-grid .pressure-cell .field { padding: 11px 12px; font-size: 16px; }
+
+    /* Toolbar: even tighter for iPhone SE */
+    .toolbar { padding: 8px 8px; gap: 8px; }
+    .toolbar .actions { gap: 5px; }
   }
 
   /* ============================================================
@@ -1195,15 +1469,16 @@
 
     <button type="button" class="btn" id="btn-email" title="Email this report">
       <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4h12v8H2zM2 4l6 5 6-5"/></svg>
-      Email
+      <span class="btn-label">Email</span>
     </button>
     <button type="button" class="btn" id="btn-share" title="Share to Files, Drive, WhatsApp...">
       <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="4" cy="8" r="1.8"/><circle cx="12" cy="3.5" r="1.8"/><circle cx="12" cy="12.5" r="1.8"/><path d="M5.6 7.1l4.8-2.7M5.6 8.9l4.8 2.7"/></svg>
-      Share
+      <span class="btn-label">Share</span>
     </button>
     <button type="button" class="btn primary" id="btn-print" title="Save as PDF or print">
       <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6V2h8v4M4 12H2V6h12v6h-2M4 10h8v4H4z"/></svg>
-      Save as PDF
+      <span class="btn-label">Save as PDF</span>
+      <span class="btn-label-short">Save PDF</span>
     </button>
   </div>
 </header>

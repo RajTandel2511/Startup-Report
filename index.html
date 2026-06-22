@@ -1530,6 +1530,10 @@
       <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="4" cy="8" r="1.8"/><circle cx="12" cy="3.5" r="1.8"/><circle cx="12" cy="12.5" r="1.8"/><path d="M5.6 7.1l4.8-2.7M5.6 8.9l4.8 2.7"/></svg>
       <span class="btn-label">Share</span>
     </button>
+    <button type="button" class="btn" id="btn-submit" title="Submit report to All Air cloud (Google Sheet)">
+      <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 2v9M4.5 7.5L8 11l3.5-3.5M2.5 13.5h11"/></svg>
+      <span class="btn-label">Submit</span>
+    </button>
     <button type="button" class="btn primary" id="btn-print" title="Save as PDF or print">
       <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6V2h8v4M4 12H2V6h12v6h-2M4 10h8v4H4z"/></svg>
       <span class="btn-label">Save as PDF</span>
@@ -2030,6 +2034,12 @@
   }
 
   /* ============================================================
+     CLOUD SUBMIT (Google Apps Script web app -> Google Sheet)
+     One-time setup: see SETUP.md, then paste the /exec URL below.
+     ============================================================ */
+  const BACKEND_URL = '';  // e.g. 'https://script.google.com/macros/s/AKfycb.../exec'
+
+  /* ============================================================
      PERSISTENCE  (localStorage)
      ============================================================ */
   const LS_KEY = 'aam_startup_report_draft_v2';
@@ -2173,6 +2183,41 @@
     // Last fallback: download the JSON
     downloadFile(file);
     toast('Downloaded JSON — attach it to your message', 'ok');
+  }
+
+  /* ============================================================
+     SUBMIT  (POST to Google Apps Script -> append row to Sheet)
+     ============================================================ */
+  async function submitReport() {
+    if (!BACKEND_URL) {
+      toast('Cloud submit not configured — see SETUP.md', 'err');
+      return;
+    }
+    const btn = document.getElementById('btn-submit');
+    const data = collectData();
+    data._submittedAt = new Date().toISOString();
+    data._userAgent = navigator.userAgent;
+
+    btn.disabled = true;
+    setStatus('Submitting…');
+    try {
+      // text/plain avoids CORS preflight against script.google.com.
+      // no-cors means we can't read the response body, but the row still gets appended.
+      await fetch(BACKEND_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(data),
+      });
+      saveDraft(true);
+      setStatus('Submitted ' + new Date().toLocaleTimeString(), 'saved');
+      toast('Report submitted', 'ok');
+    } catch (e) {
+      setStatus('Submit failed: ' + e.message, 'error');
+      toast('Submit failed — check connection', 'err');
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   /* ============================================================
@@ -2329,6 +2374,7 @@
   document.getElementById('btn-sample').addEventListener('click', fillSample);
   document.getElementById('btn-email').addEventListener('click', emailReport);
   document.getElementById('btn-share').addEventListener('click', shareReport);
+  document.getElementById('btn-submit').addEventListener('click', submitReport);
   document.getElementById('btn-print').addEventListener('click', doPrint);
 
   // Auto-save on input (debounced)
